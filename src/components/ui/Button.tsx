@@ -1,5 +1,8 @@
 import { Button as MTButton } from "@material-tailwind/react";
+import { ComponentPropsWithoutRef } from "react";
 
-export default function Button(props) {
-  return <MTButton {...props} />;
+type Props = ComponentPropsWithoutRef<"button">;
+
+export default function Button({ ...rest }: Props) {
+  return <MTButton {...rest} />;
 }

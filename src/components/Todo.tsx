@@ -1,17 +1,48 @@
 import { IconButton } from "@material-tailwind/react";
 import Checkbox from "./ui/Checkbox";
 import { useState } from "react";
+import Button from "./ui/Button";
+import { useMutation } from "@tanstack/react-query";
+import { deleteTodo, updateTodo } from "@/actions/todoAction";
+import { queryClient } from "@/config/ReactQueryProvider";
 
-export default function Todo({ id, value, completed }) {
+export default function Todo({ todo }: any) {
   const [isEditing, setIsEditing] = useState(false);
-  const [completed1, setCompleted1] = useState(false);
-  const [title, setTitle] = useState("NEW Todo");
+  const [completed, setCompleted] = useState(todo.completed);
+  const [title, setTitle] = useState(todo.title);
+
+  const { mutate: updateMutate, isPending: updatePending } = useMutation({
+    mutationFn: () =>
+      updateTodo({
+        id: todo.id,
+        title,
+        completed,
+      }),
+    onSuccess: () => {
+      setIsEditing(false);
+      queryClient.invalidateQueries({
+        queryKey: ["todos"],
+      });
+    },
+  });
+
+  const { mutate: deleteMutate, isPending: deletePending } = useMutation({
+    mutationFn: () => deleteTodo(todo.id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["todos"],
+      });
+    },
+  });
 
   return (
     <div className='w-full flex items-center gap-1'>
       <Checkbox
-        checked={completed1}
-        onChange={(e) => setCompleted1(e.target.checked)}
+        checked={completed}
+        onChange={async (e) => {
+          await setCompleted(e.target.checked);
+          await updateMutate();
+        }}
       />
 
       {isEditing ? (
@@ -21,23 +52,35 @@ export default function Todo({ id, value, completed }) {
           onChange={(e) => setTitle(e.target.value)}
         />
       ) : (
-        <p className={`flex-1 ${completed1 && "line-through"}`}>{title}</p>
+        <p className={`flex-1 ${completed && "line-through"}`}>{title}</p>
       )}
 
       {isEditing ? (
         <>
-          <IconButton
+          <Button
+            className='w-10 h-10 flex items-center justify-center'
             children={<i className='fas fa-check' />}
-            onClick={() => setIsEditing(false)}
+            onClick={async () => {
+              await setIsEditing(false);
+              await updateMutate();
+            }}
+            loading={updatePending}
           />
         </>
       ) : (
-        <IconButton
+        <Button
+          className='w-10 h-10 flex items-center justify-center'
           children={<i className='fas fa-pen' />}
           onClick={() => setIsEditing(true)}
+          loading={updatePending}
         />
       )}
-      <IconButton children={<i className='fas fa-trash' />} />
+      <Button
+        className='w-10 h-10 flex items-center justify-center'
+        children={<i className='fas fa-trash' />}
+        onClick={() => deleteMutate()}
+        loading={deletePending}
+      />
     </div>
   );
 }
