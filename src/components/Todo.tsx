@@ -1,7 +1,6 @@
 import { IconButton } from "@material-tailwind/react";
 import Checkbox from "./ui/Checkbox";
 import { useState } from "react";
-import Input from "./ui/Input";
 
 export default function Todo({ id, value, completed }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -26,18 +25,19 @@ export default function Todo({ id, value, completed }) {
       )}
 
       {isEditing ? (
-        <IconButton onClick={() => setIsEditing(false)}>
-          <i className='fas fa-check' />
-        </IconButton>
+        <>
+          <IconButton
+            children={<i className='fas fa-check' />}
+            onClick={() => setIsEditing(false)}
+          />
+        </>
       ) : (
-        <IconButton onClick={() => setIsEditing(true)}>
-          <i className='fas fa-pen' />
-        </IconButton>
+        <IconButton
+          children={<i className='fas fa-pen' />}
+          onClick={() => setIsEditing(true)}
+        />
       )}
-
-      <IconButton>
-        <i className='fas fa-trash' />
-      </IconButton>
+      <IconButton children={<i className='fas fa-trash' />} />
     </div>
   );
 }
