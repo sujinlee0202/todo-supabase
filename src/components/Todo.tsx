@@ -5,6 +5,7 @@ import Button from "./ui/Button";
 import { useMutation } from "@tanstack/react-query";
 import { deleteTodo, updateTodo } from "@/actions/todoAction";
 import { queryClient } from "@/config/ReactQueryProvider";
+import { formatDate } from "@/utils/formatDate";
 
 export default function Todo({ todo }: any) {
   const [isEditing, setIsEditing] = useState(false);
@@ -81,6 +82,8 @@ export default function Todo({ todo }: any) {
         onClick={() => deleteMutate()}
         loading={deletePending}
       />
+
+      <div>{formatDate(todo.created_at)}</div>
     </div>
   );
 }
