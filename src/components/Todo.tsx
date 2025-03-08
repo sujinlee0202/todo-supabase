@@ -18,6 +18,7 @@ export default function Todo({ todo }: any) {
         id: todo.id,
         title,
         completed,
+        completed_at: completed ? new Date().toISOString() : null,
       }),
     onSuccess: () => {
       setIsEditing(false);
@@ -84,6 +85,7 @@ export default function Todo({ todo }: any) {
       />
 
       <div>{formatDate(todo.created_at)}</div>
+      <div>{formatDate(todo.completed_at)}</div>
     </div>
   );
 }
