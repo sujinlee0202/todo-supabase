@@ -10,7 +10,7 @@ import { createTodo, getTodos } from "@/actions/todoAction";
 export default function TodoUI() {
   const [searchInput, setSearchInput] = useState("");
 
-  const { data, isLoading, isError, refetch } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ["todos"],
     queryFn: () => getTodos({ searchInput }),
   });
@@ -26,24 +26,28 @@ export default function TodoUI() {
   });
 
   return (
-    <>
-      <Input
-        value={searchInput}
-        placeholder='Search TODO'
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          setSearchInput(e.target.value)
-        }
-        label='search TODO'
-        icon={<i className='fas fa-search' />}
-      ></Input>
+    <div className='max-w-2xl mx-auto p-6 bg-gray-50'>
+      <div className='mb-6'>
+        <Input
+          value={searchInput}
+          placeholder='Search TODO'
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setSearchInput(e.target.value)
+          }
+          label='Search TODO'
+          icon={<i className='fas fa-search' />}
+        />
+      </div>
 
-      {isLoading && <p>Loading...</p>}
-      {data && data.map((todo) => <Todo key={todo.id} id={1} todo={todo} />)}
+      {isLoading && <p className='text-center'>Loading...</p>}
+      {data && data.map((todo) => <Todo key={todo.id} todo={todo} />)}
 
-      <Button onClick={() => mutate()} loading={isPending}>
-        <i className='fas fa-plus mr-2' />
-        ADD TODO
-      </Button>
-    </>
+      <div className='mt-6 flex justify-end'>
+        <Button onClick={() => mutate()} loading={isPending}>
+          <i className='fas fa-plus mr-2' />
+          ADD TODO
+        </Button>
+      </div>
+    </div>
   );
 }
